@@ -14,6 +14,11 @@ import com.recceda.invoice.common.CustomerInvoiceData;
 public class InvoiceGenerationHandler
         implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
+    private static final Map<String, String> CORS_HEADERS = Map.of(
+            "Access-Control-Allow-Origin", "*",
+            "Access-Control-Allow-Headers", "*",
+            "Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent requestEvent, Context rContext) {
         try {
