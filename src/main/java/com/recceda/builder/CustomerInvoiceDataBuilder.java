@@ -54,7 +54,7 @@ public class CustomerInvoiceDataBuilder {
      * @throws IOException if JSON parsing fails
      */
     public static CustomerInvoiceData fromJson(byte[] jsonBytes) throws IOException {
-        return fromJson(new String(jsonBytes));
+        return fromJson(new String(jsonBytes, StandardCharsets.UTF_8));
     }
 
     /**
