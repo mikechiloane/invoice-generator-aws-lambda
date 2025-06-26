@@ -14,17 +14,19 @@ import com.recceda.invoice.common.CustomerInvoiceData;
 public class InvoiceGenerationHandler
         implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
+    private static final Map<String, String> CORS_HEADERS = Map.of(
+            "Access-Control-Allow-Origin", "*",
+            "Access-Control-Allow-Headers", "*",
+            "Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent requestEvent, Context rContext) {
         try {
             APIGatewayProxyResponseEvent responseEvent = new APIGatewayProxyResponseEvent();
             responseEvent.setStatusCode(200);
 
-            responseEvent.setHeaders(Map.of(
-                    "Content-Type", "application/pdf",
-                    "Access-Control-Allow-Origin", "*",
-                    "Access-Control-Allow-Headers", "*",
-                    "Access-Control-Allow-Methods", "GET,POST,OPTIONS"));
+            responseEvent.setHeaders(CORS_HEADERS);
+            responseEvent.getHeaders().put("Content-Type", "application/pdf");
             responseEvent.setBody("Invoice generated successfully");
 
             CustomerInvoiceData customerInvoiceData = CustomerInvoiceDataBuilder.fromJson(requestEvent.getBody());
