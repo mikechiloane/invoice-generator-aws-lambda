@@ -1,6 +1,8 @@
 package com.recceda;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Base64;
 import java.util.Map;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -13,11 +15,6 @@ import com.recceda.invoice.common.CustomerInvoiceData;
 
 public class InvoiceGenerationHandler
         implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
-
-    private static final Map<String, String> CORS_HEADERS = Map.of(
-            "Access-Control-Allow-Origin", "*",
-            "Access-Control-Allow-Headers", "*",
-            "Access-Control-Allow-Methods", "GET,POST,OPTIONS");
 
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent requestEvent, Context rContext) {
@@ -32,14 +29,19 @@ public class InvoiceGenerationHandler
             CustomerInvoiceData customerInvoiceData = CustomerInvoiceDataBuilder.fromJson(requestEvent.getBody());
             File invoiceFile = new InvoiceGenerator().generateInvoice(customerInvoiceData);
             if (invoiceFile != null && invoiceFile.exists()) {
-                responseEvent.setBody("Invoice generated successfully: " + invoiceFile.getAbsolutePath());
+                responseEvent.setStatusCode(200);
+                responseEvent.setBody(
+                        Base64.getEncoder().encodeToString(java.nio.file.Files.readAllBytes(invoiceFile.toPath())));
+
+                responseEvent.setIsBase64Encoded(true);
+
             } else {
                 responseEvent.setStatusCode(500);
                 responseEvent.setBody("Failed to generate invoice");
             }
             return responseEvent;
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             APIGatewayProxyResponseEvent errorResponse = new APIGatewayProxyResponseEvent();
             errorResponse.setStatusCode(500);
             errorResponse.setHeaders(Map.of(
@@ -54,9 +56,11 @@ public class InvoiceGenerationHandler
     }
 
     private void configureResponseHeaders(APIGatewayProxyResponseEvent responseEvent) {
-        Map<String, String> headers = new java.util.HashMap<>(CORS_HEADERS);
-        headers.put("Content-Type", "application/pdf");
-        responseEvent.setHeaders(headers);
+        responseEvent.setHeaders(Map.of(
+                "Content-Type", "application/pdf",
+                "Access-Control-Allow-Origin", "*",
+                "Access-Control-Allow-Headers", "*",
+                "Access-Control-Allow-Methods", "GET,POST,OPTIONS"));
     }
 
 }
