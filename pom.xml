@@ -84,7 +84,7 @@
               <transformers>
                 <transformer
                   implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>com.recceda.ImageHandler</mainClass>
+                  <mainClass>com.recceda.InvoiceGenerationHandler</mainClass>
                 </transformer>
               </transformers>
             </configuration>

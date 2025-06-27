@@ -20,11 +20,7 @@ public class InvoiceGenerationHandler
             APIGatewayProxyResponseEvent responseEvent = new APIGatewayProxyResponseEvent();
             responseEvent.setStatusCode(200);
 
-            responseEvent.setHeaders(Map.of(
-                    "Content-Type", "application/pdf",
-                    "Access-Control-Allow-Origin", "*",
-                    "Access-Control-Allow-Headers", "*",
-                    "Access-Control-Allow-Methods", "GET,POST,OPTIONS"));
+            configureResponseHeaders(responseEvent);
             responseEvent.setBody("Invoice generated successfully");
 
             CustomerInvoiceData customerInvoiceData = CustomerInvoiceDataBuilder.fromJson(requestEvent.getBody());
@@ -49,6 +45,14 @@ public class InvoiceGenerationHandler
             return errorResponse;
         }
 
+    }
+
+    private void configureResponseHeaders(APIGatewayProxyResponseEvent responseEvent) {
+        responseEvent.setHeaders(Map.of(
+                "Content-Type", "application/pdf",
+                "Access-Control-Allow-Origin", "*",
+                "Access-Control-Allow-Headers", "*",
+                "Access-Control-Allow-Methods", "GET,POST,OPTIONS"));
     }
 
 }
