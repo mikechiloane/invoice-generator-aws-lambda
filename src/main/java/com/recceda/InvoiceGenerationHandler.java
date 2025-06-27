@@ -26,6 +26,7 @@ public class InvoiceGenerationHandler
             responseEvent.setStatusCode(200);
 
             configureResponseHeaders(responseEvent);
+
             responseEvent.setBody("Invoice generated successfully");
 
             CustomerInvoiceData customerInvoiceData = CustomerInvoiceDataBuilder.fromJson(requestEvent.getBody());
