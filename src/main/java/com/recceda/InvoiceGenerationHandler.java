@@ -3,8 +3,10 @@ package com.recceda;
 import java.io.File;
 import java.util.Base64;
 import java.util.Map;
+import java.util.UUID;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
@@ -17,16 +19,18 @@ public class InvoiceGenerationHandler
 
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent requestEvent, Context rContext) {
+        LambdaLogger logger = rContext.getLogger();
+
         try {
+
             APIGatewayProxyResponseEvent responseEvent = new APIGatewayProxyResponseEvent();
             responseEvent.setStatusCode(200);
 
             configureResponseHeaders(responseEvent);
 
-            responseEvent.setBody("Invoice generated successfully");
-
             CustomerInvoiceData customerInvoiceData = CustomerInvoiceDataBuilder.fromJson(requestEvent.getBody());
-            File invoiceFile = new InvoiceGenerator().generateInvoice(customerInvoiceData);
+            String pdfFileName = "/tmp/invoice-" + UUID.randomUUID() + ".pdf";
+            File invoiceFile = new InvoiceGenerator().generateInvoiceToPath(customerInvoiceData, pdfFileName);
             if (invoiceFile != null && invoiceFile.exists()) {
                 responseEvent.setBody(
                         Base64.getEncoder().encodeToString(java.nio.file.Files.readAllBytes(invoiceFile.toPath())));
@@ -48,6 +52,7 @@ public class InvoiceGenerationHandler
                     "Access-Control-Allow-Headers", "*",
                     "Access-Control-Allow-Methods", "GET,POST,OPTIONS"));
             errorResponse.setBody("{\"error\": \"" + e.getMessage() + "\"}");
+            logger.log("Error generating invoice: " + e);
             return errorResponse;
         }
         
