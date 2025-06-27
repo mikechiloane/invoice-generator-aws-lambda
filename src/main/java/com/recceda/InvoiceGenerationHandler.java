@@ -28,7 +28,6 @@ public class InvoiceGenerationHandler
             CustomerInvoiceData customerInvoiceData = CustomerInvoiceDataBuilder.fromJson(requestEvent.getBody());
             File invoiceFile = new InvoiceGenerator().generateInvoice(customerInvoiceData);
             if (invoiceFile != null && invoiceFile.exists()) {
-                responseEvent.setStatusCode(200);
                 responseEvent.setBody(
                         Base64.getEncoder().encodeToString(java.nio.file.Files.readAllBytes(invoiceFile.toPath())));
 
