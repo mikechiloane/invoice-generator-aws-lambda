@@ -33,8 +33,7 @@ public class InvoiceGenerationHandler
             File invoiceFile = new InvoiceGenerator().generateInvoiceToPath(customerInvoiceData, pdfFileName);
             if (invoiceFile != null && invoiceFile.exists()) {
                 responseEvent.setBody(
-                        Base64.
-                        getEncoder().encodeToString(java.nio.file.Files.readAllBytes(invoiceFile.toPath())));
+                        Base64.getEncoder().encodeToString(java.nio.file.Files.readAllBytes(invoiceFile.toPath())));
 
                 responseEvent.setIsBase64Encoded(true);
 
