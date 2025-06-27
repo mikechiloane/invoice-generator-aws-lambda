@@ -1,7 +1,6 @@
 package com.recceda;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Base64;
 import java.util.Map;
 
@@ -41,7 +40,7 @@ public class InvoiceGenerationHandler
             }
             return responseEvent;
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             APIGatewayProxyResponseEvent errorResponse = new APIGatewayProxyResponseEvent();
             errorResponse.setStatusCode(500);
             errorResponse.setHeaders(Map.of(
@@ -52,6 +51,7 @@ public class InvoiceGenerationHandler
             errorResponse.setBody("{\"error\": \"" + e.getMessage() + "\"}");
             return errorResponse;
         }
+        
 
     }
 
