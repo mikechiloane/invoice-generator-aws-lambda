@@ -54,11 +54,9 @@ public class InvoiceGenerationHandler
     }
 
     private void configureResponseHeaders(APIGatewayProxyResponseEvent responseEvent) {
-        responseEvent.setHeaders(Map.of(
-                "Content-Type", "application/pdf",
-                "Access-Control-Allow-Origin", "*",
-                "Access-Control-Allow-Headers", "*",
-                "Access-Control-Allow-Methods", "GET,POST,OPTIONS"));
+        Map<String, String> headers = new java.util.HashMap<>(CORS_HEADERS);
+        headers.put("Content-Type", "application/pdf");
+        responseEvent.setHeaders(headers);
     }
 
 }
