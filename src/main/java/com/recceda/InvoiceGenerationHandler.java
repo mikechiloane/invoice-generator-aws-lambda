@@ -26,22 +26,28 @@ public class InvoiceGenerationHandler
             APIGatewayProxyResponseEvent responseEvent = new APIGatewayProxyResponseEvent();
             responseEvent.setStatusCode(200);
 
-            configureResponseHeaders(responseEvent);
-
             CustomerInvoiceData customerInvoiceData = CustomerInvoiceDataBuilder.fromJson(requestEvent.getBody());
             String pdfFileName = "/tmp/invoice-" + UUID.randomUUID() + ".pdf";
             File invoiceFile = new InvoiceGenerator().generateInvoiceToPath(customerInvoiceData, pdfFileName);
             if (invoiceFile != null && invoiceFile.exists()) {
-                responseEvent.setBody(
-                        Base64.
-                        getEncoder().encodeToString(java.nio.file.Files.readAllBytes(invoiceFile.toPath())));
-
+                configureResponseHeaders(responseEvent);
                 responseEvent.setIsBase64Encoded(true);
-
+                responseEvent.setBody(
+                        Base64.getEncoder().encodeToString(java.nio.file.Files.readAllBytes(invoiceFile.toPath())));
+                
+                // Clean up the temporary file
+                invoiceFile.delete();
             } else {
                 responseEvent.setStatusCode(500);
-                responseEvent.setBody("Failed to generate invoice");
+                configureResponseHeaders(responseEvent);
+                responseEvent.setHeaders(Map.of(
+                        "Content-Type", "application/json",
+                        "Access-Control-Allow-Origin", "*",
+                        "Access-Control-Allow-Headers", "*",
+                        "Access-Control-Allow-Methods", "GET,POST,OPTIONS"));
+                responseEvent.setBody("{\"error\": \"Failed to generate invoice\"}");
             }
+
             return responseEvent;
 
         } catch (Exception e) {
@@ -60,12 +66,14 @@ public class InvoiceGenerationHandler
 
     }
 
-    private void configureResponseHeaders(APIGatewayProxyResponseEvent responseEvent) {
-        responseEvent.setHeaders(Map.of(
-                "Content-Type", "application/pdf",
-                "Access-Control-Allow-Origin", "*",
-                "Access-Control-Allow-Headers", "*",
-                "Access-Control-Allow-Methods", "GET,POST,OPTIONS"));
-    }
+private void configureResponseHeaders(APIGatewayProxyResponseEvent responseEvent) {
+    responseEvent.setHeaders(Map.of(
+            "Content-Type", "application/pdf",
+            "Content-Disposition", "inline; filename=\"invoice.pdf\"",
+            "Access-Control-Allow-Origin", "*",
+            "Access-Control-Allow-Headers", "Content-Type, Authorization",
+            "Access-Control-Allow-Methods", "GET,POST,OPTIONS",
+            "Cache-Control", "no-cache"));
+}
 
 }
