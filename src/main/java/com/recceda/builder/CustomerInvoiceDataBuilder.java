@@ -89,10 +89,9 @@ public class CustomerInvoiceDataBuilder {
             for (JsonNode itemNode : itemsNode) {
                 Integer quantity = itemNode.get("quantity").asInt();
                 Double unitPrice = itemNode.get("unitPrice").asDouble();
-                String itemId = itemNode.has("itemId") ? itemNode.get("itemId").asText() : "";
-                String description = itemNode.get("description").asText();
+                String itemName = itemNode.get("itemName").asText();
 
-                InvoiceItem item = new InvoiceItem(quantity, unitPrice, itemId, description);
+                InvoiceItem item = new InvoiceItem(quantity, unitPrice, itemName);
                 itemsList.add(item);
             }
         }
