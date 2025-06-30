@@ -53,7 +53,7 @@ class CustomerInvoiceDataBuilderTest {
                 "\"customerName\": \"Jane Smith\"," +
                 "\"addressLines\": [\"456 Elm St\", \"Suite 300\"]," +
                 "\"invoiceDates\": {\"invoiceDate\": \"2025-06-10\", \"invoiceDueByDate\": \"2025-06-20\"}," +
-                "\"items\": [{ \"quantity\": 5, \"unitPrice\": 15.0, \"itemId\": \"G456\", \"description\": \"An advanced gadget\"}],"
+                "\"items\": [{ \"quantity\": 5, \"unitPrice\": 15.0, \"itemId\": \"G456\", \"itemName\": \"An advanced gadget\"}],"
                 +
                 "\"totalsAndTaxInfo\": {\"subTotal\": \"75.00\", \"tax\": \"7.50\", \"taxRate\": \"10%\", \"total\": \"82.50\"}"
                 +
