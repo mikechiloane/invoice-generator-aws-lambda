@@ -35,7 +35,6 @@ public class InvoiceGenerationHandler
                 responseEvent.setBody(
                         Base64.getEncoder().encodeToString(java.nio.file.Files.readAllBytes(invoiceFile.toPath())));
                 
-                // Clean up the temporary file
                 invoiceFile.delete();
             } else {
                 responseEvent.setStatusCode(500);
